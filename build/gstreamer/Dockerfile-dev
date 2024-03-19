@@ -1,0 +1,20 @@
+ARG GSTREAMER_VERSION
+
+FROM usamaliaqat/gstreamer:${GSTREAMER_VERSION}-base-${TARGETARCH}
+
+ENV DEBUG=true
+ENV OPTIMIZATIONS=false
+
+COPY compile /
+COPY compile-rs /
+
+RUN /compile
+RUN /compile-rs
+
+FROM ubuntu:23.10
+
+COPY install-dependencies /
+
+RUN /install-dependencies
+
+COPY --from=0 /compiled-binaries /

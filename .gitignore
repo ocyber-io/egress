@@ -1,0 +1,8 @@
+.idea/
+.DS_Store
+
+.github/workflows/config.yaml
+build/gstcefsrc/*.tar.bz2
+test/output/*
+test/*.yaml
+!test/config-sample.yaml
