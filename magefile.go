@@ -26,6 +26,7 @@ import (
 	"strings"
 
 	"github.com/livekit/mageutil"
+	"github.com/magefile/mage/sh"
 )
 
 const (
@@ -191,6 +192,20 @@ func BuildTemplate() error {
 
 func BuildGStreamer() error {
 	return buildGstreamer(dockerBuild)
+}
+
+func RunLocally() error {
+	os.Setenv("CGO_ENABLED", "1")
+	os.Setenv("GO111MODULE", "on")
+	os.Setenv("GODEBUG", "disablethp=1")
+	return sh.Run("go", "run", "./cmd/server")
+}
+
+func BuildLocally() error {
+	os.Setenv("CGO_ENABLED", "1")
+	os.Setenv("GO111MODULE", "on")
+	os.Setenv("GODEBUG", "disablethp=1")
+	return sh.Run("go", "build", "-a", "-o", "egress", "./cmd/server")
 }
 
 func buildGstreamer(cmd string) error {
