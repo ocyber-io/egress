@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -198,6 +199,13 @@ func RunLocally() error {
 	os.Setenv("CGO_ENABLED", "1")
 	os.Setenv("GO111MODULE", "on")
 	os.Setenv("GODEBUG", "disablethp=1")
+	absolutePath, err := filepath.Abs("./test/config-sample.yaml")
+	if err != nil {
+		fmt.Print(err)
+	} else {
+		os.Setenv("EGRESS_CONFIG_FILE", absolutePath)
+	}
+
 	return sh.Run("go", "run", "./cmd/server")
 }
 
@@ -205,7 +213,7 @@ func BuildLocally() error {
 	os.Setenv("CGO_ENABLED", "1")
 	os.Setenv("GO111MODULE", "on")
 	os.Setenv("GODEBUG", "disablethp=1")
-	return sh.Run("go", "build", "-a", "-o", "egress", "./cmd/server")
+	return sh.Run("go", "build", "-a", "-o", "./out/egress", "./cmd/server")
 }
 
 func buildGstreamer(cmd string) error {

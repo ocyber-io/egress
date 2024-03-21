@@ -6,3 +6,4 @@ build/gstcefsrc/*.tar.bz2
 test/output/*
 test/*.yaml
 !test/config-sample.yaml
+out
