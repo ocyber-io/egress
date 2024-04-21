@@ -1,7 +1,6 @@
 [Unit]
 Wants=network.target
 [Service]
-Environment="PATH=$PATH:/usr/local/bin/egress"
 WorkingDirectory=/usr/local/bin
 ExecStart=/usr/local/bin/egress --config /usr/local/etc/egress.yaml
 Restart=always
