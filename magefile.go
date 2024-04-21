@@ -29,6 +29,8 @@ import (
 	"github.com/magefile/mage/sh"
 )
 
+var Default = Install
+
 const (
 	gstVersion      = "1.22.8"
 	libniceVersion  = "0.1.21"
@@ -205,7 +207,54 @@ func BuildLocally() error {
 	os.Setenv("CGO_ENABLED", "1")
 	os.Setenv("GO111MODULE", "on")
 	os.Setenv("GODEBUG", "disablethp=1")
-	return sh.Run("go", "build", "-a", "-o", "egress", "./cmd/server")
+	return sh.Run("go", "build", "-a", "-o", "dist/egress", "./cmd/server")
+}
+
+func ConfigureService() error {
+	if err := sh.Run("sudo", "cp", "egress.service", "/etc/systemd/system/egress.service"); err != nil {
+		return err
+	}
+
+	if err := sh.Run("sudo", "systemctl", "daemon-reload"); err != nil {
+		return err
+	}
+
+	if err := sh.Run("sudo", "systemctl", "enable", "egress"); err != nil {
+		return err
+	}
+
+	return sh.Run("sudo", "systemctl", "start", "egress")
+}
+
+func Deploy() error {
+	if err := sh.Run("sudo", "rm", "/usr/local/bin/egress"); err != nil {
+		return err
+	}
+
+	if err := sh.Run("sudo", "rm", "/usr/local/etc/egress.yaml"); err != nil {
+		return err
+	}
+
+	if err := sh.Run("sudo", "cp", "dist/egress", "/usr/local/bin/egress"); err != nil {
+		return err
+	}
+
+	if err := sh.Run("sudo", "cp", "test/config-sample.yaml", "/usr/local/etc/egress.yaml"); err != nil {
+		return err
+	}
+
+	return sh.Run("sudo", "systemctl", "restart", "egress")
+}
+
+func Install() error {
+	if err := BuildLocally(); err != nil {
+		return err
+	}
+
+	if err := ConfigureService(); err != nil {
+		return err
+	}
+	return Deploy()
 }
 
 func buildGstreamer(cmd string) error {
