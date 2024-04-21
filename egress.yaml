@@ -1,0 +1,6 @@
+log_level: vorbus
+redis:
+  address: 34.234.57.109:6379
+api_key: 'APIJipPAnaNMM3z'
+api_secret: 'tZam0dHU1SA9lyEsh7eX95Gx5t2bnfDwXNPDzXK0EzN'
+ws_url: 'wss://cohost.live.reup.live'

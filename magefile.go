@@ -239,7 +239,7 @@ func Deploy() error {
 		return err
 	}
 
-	if err := sh.Run("sudo", "cp", "test/config-sample.yaml", "/usr/local/etc/egress.yaml"); err != nil {
+	if err := sh.Run("sudo", "cp", "egress.yaml", "/usr/local/etc/egress.yaml"); err != nil {
 		return err
 	}
 
