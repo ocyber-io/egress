@@ -227,11 +227,11 @@ func ConfigureService() error {
 }
 
 func Deploy() error {
-	if err := sh.Run("sudo", "rm", "/usr/local/bin/egress"); err != nil {
+	if err := sh.Run("sudo", "rm", "-rf", "/usr/local/bin/egress"); err != nil {
 		return err
 	}
 
-	if err := sh.Run("sudo", "rm", "/usr/local/etc/egress.yaml"); err != nil {
+	if err := sh.Run("sudo", "rm", "-rf", "/usr/local/etc/egress.yaml"); err != nil {
 		return err
 	}
 
