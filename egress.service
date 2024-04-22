@@ -2,8 +2,8 @@
 Wants=network.target
 [Service]
 WorkingDirectory=/usr/local/bin
-ExecStartPre=/bin/bash -c 'sudo pulseaudio --system || true'
 ExecStart=/usr/local/bin/egress --config /usr/local/etc/egress.yaml
+ExecStartPost=/bin/bash -c 'sudo pulseaudio --system || true'
 Restart=always
 [Install]
 WantedBy=multi-user.target
