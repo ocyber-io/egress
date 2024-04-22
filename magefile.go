@@ -20,7 +20,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"path"
 	"runtime"
 	"strings"
@@ -210,20 +212,150 @@ func BuildLocally() error {
 	return sh.Run("go", "build", "-a", "-o", "dist/egress", "./cmd/server")
 }
 
-func ConfigureService() error {
-	if err := sh.Run("sudo", "cp", "egress.service", "/etc/systemd/system/egress.service"); err != nil {
+func StopAllServices() error {
+	output, err := sh.Output("sudo", "systemctl", "list-units", "egress@*.service", "--no-legend")
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		// Extract the service name from the line
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			serviceName := fields[0]
+
+			// Stop the service
+			fmt.Printf("Stopping service: %s\n", serviceName)
+			err := exec.Command("sudo", "systemctl", "stop", serviceName).Run()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func StartAllServices() error {
+	output, err := sh.Output("sudo", "systemctl", "list-units", "egress@*.service", "--no-legend")
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		// Extract the service name from the line
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			serviceName := fields[0]
+
+			// Stop the service
+			fmt.Printf("Stopping service: %s\n", serviceName)
+			err := exec.Command("sudo", "systemctl", "start", serviceName).Run()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func RestartAllServices() error {
+	output, err := sh.Output("sudo", "systemctl", "list-units", "egress@*.service", "--no-legend")
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		// Extract the service name from the line
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			serviceName := fields[0]
+
+			// Stop the service
+			fmt.Printf("Stopping service: %s\n", serviceName)
+			err := exec.Command("sudo", "systemctl", "restart", serviceName).Run()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func DisableAllServices() error {
+	output, err := sh.Output("sudo", "systemctl", "list-units", "egress@*.service", "--no-legend")
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		// Extract the service name from the line
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			serviceName := fields[0]
+
+			// Stop the service
+			fmt.Printf("Stopping service: %s\n", serviceName)
+			err := exec.Command("sudo", "systemctl", "disable", serviceName).Run()
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func StopAndDisableAllServices() error {
+	output, err := sh.Output("sudo", "systemctl", "list-units", "egress@*.service", "--no-legend")
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(output, "\n")
+	for _, line := range lines {
+		// Extract the service name from the line
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			serviceName := fields[0]
+
+			// Stop the service
+			fmt.Printf("Stopping service: %s\n", serviceName)
+			if err := exec.Command("sudo", "systemctl", "stop", serviceName).Run(); err != nil {
+				return err
+			}
+			if err := exec.Command("sudo", "systemctl", "disable", serviceName).Run(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+
+}
+
+func EnableAndStartService(number int) error {
+	serviceName := fmt.Sprintf("egress@%d", number)
+	if err := sh.Run("sudo", "systemctl", "enable", serviceName); err != nil {
 		return err
 	}
 
+	return sh.Run("sudo", "systemctl", "start", serviceName)
+}
+
+func ConfigureService() error {
+	if err := StopAndDisableAllServices(); err != nil {
+		log.Print(err)
+	}
+
+	if err := sh.Run("sudo", "cp", "egress.service", "/etc/systemd/system/egress@.service"); err != nil {
+		return err
+	}
 	if err := sh.Run("sudo", "systemctl", "daemon-reload"); err != nil {
 		return err
 	}
-
-	if err := sh.Run("sudo", "systemctl", "enable", "egress"); err != nil {
-		return err
-	}
-
-	return sh.Run("sudo", "systemctl", "start", "egress")
+	return EnableAndStartService(1)
 }
 
 func Deploy() error {
@@ -243,14 +375,13 @@ func Deploy() error {
 		return err
 	}
 
-	return sh.Run("sudo", "systemctl", "restart", "egress")
+	return RestartAllServices()
 }
 
 func Install() error {
 	if err := BuildLocally(); err != nil {
 		return err
 	}
-
 	if err := ConfigureService(); err != nil {
 		return err
 	}
