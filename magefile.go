@@ -344,6 +344,15 @@ func EnableAndStartService(number int) error {
 	return sh.Run("sudo", "systemctl", "start", serviceName)
 }
 
+func DisableAndStopService(number int) error {
+	serviceName := fmt.Sprintf("egress@%d", number)
+	if err := sh.Run("sudo", "systemctl", "disable", serviceName); err != nil {
+		return err
+	}
+
+	return sh.Run("sudo", "systemctl", "stop", serviceName)
+}
+
 func ConfigureService() error {
 	if err := StopAndDisableAllServices(); err != nil {
 		log.Print(err)
