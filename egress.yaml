@@ -8,3 +8,12 @@ debug_handler_port: 7983
 api_key: 'APIJipPAnaNMM3z'
 api_secret: 'tZam0dHU1SA9lyEsh7eX95Gx5t2bnfDwXNPDzXK0EzN'
 ws_url: 'wss://cohost.live.reup.live'
+cpu_cost:
+  max_cpu_utilization: 0.8
+  room_composite_cpu_cost: 1.5
+  audio_room_composite_cpu_cost: 1
+  web_cpu_cost: 1.5
+  audio_web_cpu_cost: 1
+  participant_cpu_cost: 1
+  track_composite_cpu_cost: 1
+  track_cpu_cost: 0.5
