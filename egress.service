@@ -2,8 +2,8 @@
 Wants=network.target
 [Service]
 WorkingDirectory=/usr/local/bin
+ExecStartPre=-/usr/bin/pulseaudio --system
 ExecStart=/usr/local/bin/egress --config /usr/local/etc/egress.yaml
-ExecStartPost=-/usr/bin/pulseaudio --system
 Restart=always
 [Install]
 WantedBy=multi-user.target
