@@ -7,7 +7,8 @@ prometheus_port: 7982
 debug_handler_port: 7983
 api_key: 'APIJipPAnaNMM3z'
 api_secret: 'tZam0dHU1SA9lyEsh7eX95Gx5t2bnfDwXNPDzXK0EzN'
-ws_url: 'wss://cohost.live.reup.live'
+ws_url: ws://34.234.57.109:7880
+insecure: true
 cpu_cost:
   max_cpu_utilization: 0.8
   room_composite_cpu_cost: 1.3
