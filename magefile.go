@@ -322,10 +322,10 @@ func StopAndDisableAllServices() error {
 
 			// Stop the service
 			fmt.Printf("Stopping service: %s\n", serviceName)
-			if err := exec.Command("sudo", "systemctl", "stop", serviceName).Run(); err != nil {
+			if err := exec.Command("sudo", "systemctl", "disable", serviceName).Run(); err != nil {
 				return err
 			}
-			if err := exec.Command("sudo", "systemctl", "disable", serviceName).Run(); err != nil {
+			if err := exec.Command("sudo", "systemctl", "stop", serviceName).Run(); err != nil {
 				return err
 			}
 		}
