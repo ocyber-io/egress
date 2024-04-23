@@ -381,6 +381,10 @@ func ConfigureService() error {
 }
 
 func Deploy() error {
+	if err := sh.Run("sudo", "mkdir", "-p", "/usr/local/bin"); err != nil {
+		return err
+	}
+
 	if err := sh.Run("sudo", "rm", "-rf", "/usr/local/bin/egress"); err != nil {
 		return err
 	}
