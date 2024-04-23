@@ -4,6 +4,7 @@ redis:
 template_port: 7980
 health_port: 7981
 prometheus_port: 7982
+debug_handler_port: 7983
 api_key: 'APIJipPAnaNMM3z'
 api_secret: 'tZam0dHU1SA9lyEsh7eX95Gx5t2bnfDwXNPDzXK0EzN'
 ws_url: 'wss://cohost.live.reup.live'
