@@ -28,11 +28,11 @@ import (
 const (
 	TmpDir = "/home/egress/tmp"
 
-	roomCompositeCpuCost      = 4
+	roomCompositeCpuCost      = 1
 	audioRoomCompositeCpuCost = 1
-	webCpuCost                = 4
+	webCpuCost                = 1
 	audioWebCpuCost           = 1
-	participantCpuCost        = 2
+	participantCpuCost        = 1
 	trackCompositeCpuCost     = 1
 	trackCpuCost              = 0.5
 	maxCpuUtilization         = 0.8
