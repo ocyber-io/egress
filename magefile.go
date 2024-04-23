@@ -353,6 +353,19 @@ func DisableAndStopService(number int) error {
 	return sh.Run("sudo", "systemctl", "stop", serviceName)
 }
 
+func ConfigurePulseService() error {
+	if err := sh.Run("sudo", "cp", "pulseaudio.service", "/etc/systemd/system/pulseaudio.service"); err != nil {
+		return err
+	}
+	if err := sh.Run("sudo", "systemctl", "daemon-reload"); err != nil {
+		return err
+	}
+	if err := sh.Run("sudo", "systemctl", "enable", "pulseaudio"); err != nil {
+		return err
+	}
+	return sh.Run("sudo", "systemctl", "start", "pulseaudio")
+}
+
 func ConfigureService() error {
 	if err := StopAndDisableAllServices(); err != nil {
 		log.Print(err)
