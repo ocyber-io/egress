@@ -22,6 +22,7 @@ require (
 	github.com/livekit/protocol v1.11.1-0.20240307194236-37d8b0515da0
 	github.com/livekit/psrpc v0.5.3-0.20240228172457-3724cb4adbc4
 	github.com/livekit/server-sdk-go/v2 v2.0.1
+	github.com/magefile/mage v1.15.0
 	github.com/pion/rtp v1.8.3
 	github.com/pion/webrtc/v3 v3.2.28
 	github.com/pkg/errors v0.9.1
@@ -36,6 +37,7 @@ require (
 	google.golang.org/api v0.162.0
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.32.0
+	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -75,7 +77,6 @@ require (
 	github.com/lithammer/shortuuid/v4 v4.0.0 // indirect
 	github.com/livekit/mediatransportutil v0.0.0-20231213075826-cccbf2b93d3f // indirect
 	github.com/mackerelio/go-osstat v0.2.4 // indirect
-	github.com/magefile/mage v1.15.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-ieproxy v0.0.1 // indirect
 	github.com/mattn/go-pointer v0.0.1 // indirect

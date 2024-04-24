@@ -20,6 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -29,6 +30,7 @@ import (
 
 	"github.com/livekit/mageutil"
 	"github.com/magefile/mage/sh"
+	"gopkg.in/yaml.v2"
 )
 
 //var Default = Install
@@ -40,6 +42,46 @@ const (
 	dockerBuild     = "docker build"
 	dockerBuildX    = "docker buildx build --push --platform linux/amd64,linux/arm64"
 )
+
+type Config struct {
+	LogLevel         string  `yaml:"log_level"`
+	Redis            Redis   `yaml:"redis"`
+	TemplatePort     int     `yaml:"template_port"`
+	HealthPort       int     `yaml:"health_port"`
+	PrometheusPort   int     `yaml:"prometheus_port"`
+	DebugHandlerPort int     `yaml:"debug_handler_port"`
+	APIKey           string  `yaml:"api_key"`
+	APISecret        string  `yaml:"api_secret"`
+	WSURL            string  `yaml:"ws_url"`
+	Insecure         bool    `yaml:"insecure"`
+	CPUCost          CPUCost `yaml:"cpu_cost"`
+}
+
+type Redis struct {
+	Address string `yaml:"address"`
+}
+
+type CPUCost struct {
+	MaxCPUUtilization         float64 `yaml:"max_cpu_utilization"`
+	RoomCompositeCPUCost      float64 `yaml:"room_composite_cpu_cost"`
+	AudioRoomCompositeCPUCost float64 `yaml:"audio_room_composite_cpu_cost"`
+	WebCPUCost                float64 `yaml:"web_cpu_cost"`
+	AudioWebCPUCost           float64 `yaml:"audio_web_cpu_cost"`
+	ParticipantCPUCost        float64 `yaml:"participant_cpu_cost"`
+	TrackCompositeCPUCost     float64 `yaml:"track_composite_cpu_cost"`
+	TrackCPUCost              float64 `yaml:"track_cpu_cost"`
+}
+
+func (config Config) exportYaml(output string) {
+	yamlData, err := yaml.Marshal(&config)
+	if err != nil {
+		log.Fatalf("Failed to marshal YAML: %v", err)
+	}
+	err = ioutil.WriteFile(output, yamlData, 0644)
+	if err != nil {
+		log.Fatalf("Failed to write YAML to file: %v", err)
+	}
+}
 
 type packageInfo struct {
 	Dir string
@@ -380,7 +422,36 @@ func ConfigureService() error {
 	return EnableAndStartService(1)
 }
 
+func GetEgressConfigPath() string {
+	filename := ""
+	if _, err := os.Stat("./dist/egress.yaml"); !os.IsNotExist(err) {
+		filename = "./dist/egress.yaml"
+	} else if _, err := os.Stat("egress.yaml"); !os.IsNotExist(err) {
+		filename = "egress.yaml"
+	}
+	return filename
+}
+
+func ConfigureEgress() error {
+	egressPath := GetEgressConfigPath()
+	file, err := os.Open(egressPath)
+	if err != nil {
+		log.Fatalf("Failed to open YAML file: %v", err)
+	}
+	defer file.Close()
+	var config Config
+	decoder := yaml.NewDecoder(file)
+	if err := decoder.Decode(&config); err != nil {
+		log.Fatalf("Failed to decode YAML: %v", err)
+	}
+	config.exportYaml("./dist/egress.yaml")
+	return nil
+}
+
 func Deploy() error {
+	if err := ConfigureEgress(); err != nil {
+		return err
+	}
 	if err := sh.Run("sudo", "mkdir", "-p", "/usr/local/bin"); err != nil {
 		return err
 	}
