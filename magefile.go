@@ -31,7 +31,7 @@ import (
 	"github.com/magefile/mage/sh"
 )
 
-var Default = Install
+//var Default = Install
 
 const (
 	gstVersion      = "1.22.8"
